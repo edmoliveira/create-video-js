@@ -1,0 +1,96 @@
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+		<meta name="format-detection" content="telephone=no">
+		<meta name="msapplication-tap-highlight" content="no">
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+		<title>Create Videos</title>
+		<link rel="stylesheet" type="text/css" href="style/index.css">
+        <link rel="stylesheet" type="text/css" href="style/bootstrap-icons.css">
+        <link rel="stylesheet" type="text/css" href="style/bootstrap.min.css">
+	</head>
+	<body class="d-flex flex-column h-100">
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+
+            <div class="container-fluid">
+                <a class="navbar-brand"><i class="bi bi-camera-reels-fill"></i></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                  <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a id="openButton" class="nav-link"><i class="bi bi-folder2-open" style="font-size: 25px;"
+                          data-bs-toggle="tooltip" data-bs-placement="bottom" title="Open"></i></a>
+                    </li>
+                    <li class="nav-item">
+                      <a id="playButton" class="nav-link"><i class="bi bi-play-circle-fill" style="font-size: 25px;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Play"></i></a>
+                    </li>
+                    <li class="nav-item">
+                      <a id="pauseButton" class="nav-link"><i class="bi bi-pause-circle-fill" style="font-size: 25px;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Pause"></i></a>
+                    </li>
+                    <li class="nav-item">
+                      <a id="restartButton" class="nav-link"><i class="bi bi-collection-play-fill" style="font-size: 25px;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restart"></i></a>
+                    </li>
+                    <li class="nav-item">
+                      <a id="stopButton" class="nav-link"><i class="bi bi-stop-circle-fill" style="font-size: 25px;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Stop"></i></a>
+                    </li>
+                    <li class="nav-item">
+                      <a id="saveButton" class="nav-link"><i class="bi bi-save-fill" style="font-size: 25px;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save"></i></a>
+                    </li>  
+                    <li class="nav-item">
+                      <a id="cancelButton" class="nav-link"><i class="bi bi-folder-symlink-fill" style="font-size: 25px;"
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Cancel"></i></a>
+                    </li>  
+                  </ul>
+                </div>
+            </div>
+          
+        </nav>
+        <div class="body-auto">
+          <div class="btn btn-primary btn-circle btn-xl btn-rotate">
+            <img class="btn-i-rotate" src="images/rotateScreen.png" alt="rotate"> 
+          </div>
+          <div class="container canvas-container">
+            <canvas id="stage" style="width: 75%;height: 95%;"></canvas>
+          </div>
+          <canvas id="hideStage" style="display: none"></canvas> 
+        </div>
+        <footer class="footer mt-auto py-3 bg-dark">
+            <div class="container" style="text-align: center;">
+                <span class="text-light">Place sticky footer content here.</span>
+            </div>
+        </footer>
+        <div class="modal fade" id="popup-files" tabindex="-1">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Files</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="container card-modal-files">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
+        <script>
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+              return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        </script>
+        <script type="text/javascript" src="js/index.js"></script>
+	</body>
+</html>

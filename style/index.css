@@ -1,0 +1,61 @@
+html,body {
+    height: 100%;
+ }
+
+body {
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+.body-auto {
+    background-color: rgb(234, 228, 228);
+    height: 100%;
+    overflow-y: hidden;
+}
+
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    font-size: 24px;
+    line-height: 1.33;
+    border-radius: 35px;
+}
+
+.btn-rotate {
+    position: absolute;
+    overflow: hidden;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn-i-rotate {
+    width: 40px;
+    height: 40px;
+    transition: all .3s ease-in;
+    margin-left: 50%;
+    margin-top: 50%;
+    transform: translate(-50%, -35%) rotate(-45deg);
+}
+
+.canvas-container {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.canvas-container canvas {
+    position: absolute;
+    background-color: white;
+    border: 1px solid rgb(148, 148, 148);
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: all .3s ease-in;
+}
+
+.card-file:hover {
+    background-color: rgb(221, 220, 218);
+}
