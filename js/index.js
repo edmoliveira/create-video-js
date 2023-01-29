@@ -12,8 +12,24 @@ const stopButton = document.getElementById('stopButton');
 const saveButton = document.getElementById('saveButton');
 const cancelButton = document.getElementById('cancelButton');
 
+const timeLabel = document.getElementById('span-time'); 
+const timeIcon = document.getElementById('icon-time');
+
 let fileSelected = null;
 let filesModal = null;
+let videoUrl = null;
+
+let factory = null;
+
+const videosScript = document.createElement('script');
+
+videosScript.setAttribute('src', url + 'factory-frame.js');
+
+videosScript.onload = function() {
+    factory = factoryFrame(url);
+}
+
+document.body.appendChild(videosScript);
 
 disableLinkButton(playButton);
 disableLinkButton(pauseButton);
@@ -21,6 +37,9 @@ disableLinkButton(restartButton);
 disableLinkButton(stopButton);
 disableLinkButton(saveButton);
 disableLinkButton(cancelButton);
+
+btnRotate.rotate = true;
+setStageSize(btnRotate);
 
 openButton.onclick = () => {
     disableLinkButton(openButton);
@@ -48,12 +67,23 @@ openButton.onclick = () => {
 }
 
 playButton.onclick = () => {
+    videoUrl  = null;
+
     disableLinkButton(playButton);
     disableLinkButton(cancelButton);
     enableLinkButton(pauseButton);
     enableLinkButton(stopButton);
+    disableLinkButton(saveButton);
 
     fileSelected.objFrame.start();
+
+    startRecord(hideStage, 25, "video/mp4", pauseButton, restartButton, stopButton).then(url => {
+        videoUrl = url;
+    });
+
+    timeIcon.classList.add('fa-record-vinyl');
+    timeIcon.classList.add('footer-icon-color');
+    timeIcon.classList.remove('fa-video');    
 }
 
 pauseButton.onclick = () => {
@@ -62,6 +92,10 @@ pauseButton.onclick = () => {
     enableLinkButton(restartButton);
 
     fileSelected.objFrame.pause();
+
+    timeIcon.classList.remove('fa-record-vinyl');
+    timeIcon.classList.remove('footer-icon-color');
+    timeIcon.classList.add('fa-pause');
 }
 
 restartButton.onclick = () => {
@@ -70,38 +104,80 @@ restartButton.onclick = () => {
     disableLinkButton(restartButton);
 
     fileSelected.objFrame.restart();
+
+    timeIcon.classList.add('fa-record-vinyl');
+    timeIcon.classList.add('footer-icon-color');
+    timeIcon.classList.remove('fa-pause');
 }
 
 cancelButton.onclick = () => {
+    videoUrl  = null;
+
     cleanFile();
+    cleanTimer();
     enableLinkButton(openButton);
     disableLinkButton(playButton);
     disableLinkButton(cancelButton);
+    disableLinkButton(saveButton);
+}
+
+saveButton.onclick = () => {
+    var link$ = document.createElement('a');
+
+    link$.setAttribute('href', videoUrl);
+    link$.setAttribute('target', '_blank');
+    link$.click()
 }
 
 btnRotate.onclick = () => {
-    if(this.rotate){
-        this.rotate = false;
-        btnIRotate.style.transform = 'translate(-50%, -35%) rotate(-45deg)';
-        stage.style.width = '75%';
+    setStageSize(this);
+}
 
-        hideStage.width = 1920;
-        hideStage.height = 1080;
-    }
-    else {
-        this.rotate = true;
-        btnIRotate.style.transform = 'translate(-50%, -35%) rotate(45deg)';
-        stage.style.width = '33.33333%';
+stopButton.addEventListener("click", stopButton_Onclick, false);
 
-        hideStage.width = 1080;
-        hideStage.height = 1920;
-    }
+function stopButton_Onclick(e) {
+    enableLinkButton(playButton);
+    enableLinkButton(cancelButton);
+    enableLinkButton(saveButton);
+    disableLinkButton(stopButton);
+    disableLinkButton(pauseButton);
+
+    fileSelected.objFrame.stop();
+
+    timeIcon.classList.remove('fa-record-vinyl');
+    timeIcon.classList.remove('footer-icon-color');
+    timeIcon.classList.add('fa-video');
 }
 
 new ResizeObserver(() => {
     stage.width = stage.offsetWidth;
     stage.height = stage.offsetHeight;
 }).observe(stage)
+
+function setStageSize(rotateButton){
+    if(rotateButton.rotate){
+        rotateButton.rotate = false;
+        btnIRotate.style.transform = 'translate(-50%, -35%) rotate(-45deg)';
+        stage.style.width = '75%';
+
+        hideStage.style.width = '1920px';
+        hideStage.style.height = '1080px';
+
+        hideStage.width = 1920;
+        hideStage.height = 1080;
+    }
+    else {
+        rotateButton.rotate = true;
+        btnIRotate.style.transform = 'translate(-50%, -35%) rotate(45deg)';
+        stage.style.width = '33.33333%';
+
+        hideStage.style.width = '1080px';
+        hideStage.style.height = '1920px';
+
+        hideStage.width = 1080;
+        hideStage.height = 1920;
+    }
+}
 
 function disableLinkButton(link) {
     link.classList.add('disabled');
@@ -112,8 +188,6 @@ function enableLinkButton(link) {
 }
 
 function cleanFile() {
-    document.body.removeChild(fileSelected.script);
-
     fileSelected = null;
 }
 
@@ -166,24 +240,17 @@ function createFilesModal(data, container) {
         elemCol.file = obj;
 
         elemCol.onclick = function() {
-            var script = document.createElement('script');
-
-            script.setAttribute('src', url + obj.path);
-
-            script.onload = function() {
+            factory.create(obj.key).then(fn => {
                 fileSelected = {
-                    objFrame: factoryFrame(stage, hideStage),
-                    script: script
+                    objFrame: fn(stage, hideStage)
                 };
-    
+
                 enableLinkButton(playButton);
-                enableLinkButton(cancelButton);                
-            }
+                enableLinkButton(cancelButton);  
+            });
 
-            fileSelected = '';
+            fileSelected = null;
             filesModal.hide();
-
-            document.body.appendChild(script);
         }
 
         const card = document.createElement('DIV');
@@ -224,3 +291,86 @@ function createFilesModal(data, container) {
         colCount++;
     }
 }
+
+function startRecord(elCanvas, fps, type, fnPause, fnRestart, fnStop) {
+    return new Promise(function (res, rej) {
+        const recordedChunks = [];
+        const stream = elCanvas.captureStream(fps);
+    
+        const mediaRecorder = new MediaRecorder(stream);
+        
+        mediaRecorder.ondataavailable = function (event) {
+            recordedChunks.push(event.data);
+        }
+    
+        mediaRecorder.onstop = function (event) {
+            var blob = new Blob(recordedChunks, {type: type });
+            var url = URL.createObjectURL(blob);
+            res(url);
+        }
+
+        fnPause.addEventListener("click", function() {
+            if(mediaRecorder.state === 'recording') {
+                mediaRecorder.pause();
+                pauseTimer();
+            }
+        }, false);
+
+        fnRestart.addEventListener("click", function() {
+            if(mediaRecorder.state === 'paused') {
+                mediaRecorder.resume();
+                restartTimer();
+            }
+        }, false);
+
+        fnStop.addEventListener("click", function() {
+            if(mediaRecorder.state === 'recording') {
+                stopTimer();
+                mediaRecorder.stop();  
+            }
+        }, false);
+
+        mediaRecorder.start();
+        startTimer();
+    });
+}
+
+let secondsTimer = 0;
+let idTimer = null;
+let wasPausedTimer = false;
+
+function startTimer() {
+    timeLabel.innerHTML = toTime(0);
+
+    idTimer = setInterval(() => {
+        if(!wasPausedTimer) {
+            secondsTimer++;
+            timeLabel.innerHTML = toTime(secondsTimer);
+        }
+    }, 1000);
+}
+
+function pauseTimer() {
+    wasPausedTimer = true;
+}
+
+function restartTimer() {
+    wasPausedTimer = false;
+}
+
+function stopTimer() {
+    clearInterval(idTimer);
+}
+
+function cleanTimer() {
+    secondsTimer = 0;
+    timeLabel.innerHTML = toTime(secondsTimer);
+}
+
+function toTime(seconds) {
+    const date = new Date(null);
+
+    date.setSeconds(seconds);
+
+    return date.toISOString().substr(11, 8);
+ }

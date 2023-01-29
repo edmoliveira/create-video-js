@@ -8,6 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="style/index.css">
         <link rel="stylesheet" type="text/css" href="style/bootstrap-icons.css">
         <link rel="stylesheet" type="text/css" href="style/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="style/fontawesome.all.css">
 	</head>
 	<body class="d-flex flex-column h-100">
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -41,7 +42,7 @@
                     </li>
                     <li class="nav-item">
                       <a id="saveButton" class="nav-link"><i class="bi bi-save-fill" style="font-size: 25px;"
-                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Save"></i></a>
+                        data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"></i></a>
                     </li>  
                     <li class="nav-item">
                       <a id="cancelButton" class="nav-link"><i class="bi bi-folder-symlink-fill" style="font-size: 25px;"
@@ -59,11 +60,12 @@
           <div class="container canvas-container">
             <canvas id="stage" style="width: 75%;height: 95%;"></canvas>
           </div>
-          <canvas id="hideStage" style="display: none"></canvas> 
+          <canvas id="hideStage"></canvas> 
         </div>
         <footer class="footer mt-auto py-3 bg-dark">
             <div class="container" style="text-align: center;">
-                <span class="text-light">Place sticky footer content here.</span>
+                <i id="icon-time" class="fas fa-solid fa-video footer-icon"></i>
+                <span id="span-time" class="text-light">00:00:00</span>
             </div>
         </footer>
         <div class="modal fade" id="popup-files" tabindex="-1">

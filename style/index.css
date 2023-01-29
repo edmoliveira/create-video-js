@@ -59,3 +59,17 @@ body {
 .card-file:hover {
     background-color: rgb(221, 220, 218);
 }
+
+#hideStage {
+    display: none;
+}
+
+.footer-icon {
+    color: #FFFFFF;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.footer-icon-color {
+    color: #f44336!important;
+}
