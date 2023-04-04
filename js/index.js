@@ -75,6 +75,7 @@ playButton.onclick = () => {
     enableLinkButton(stopButton);
     disableLinkButton(saveButton);
 
+    fileSelected.objFrame.resize();
     fileSelected.objFrame.start();
 
     startRecord(hideStage, 25, "video/mp4", pauseButton, restartButton, stopButton).then(url => {
@@ -152,6 +153,10 @@ function stopButton_Onclick(e) {
 new ResizeObserver(() => {
     stage.width = stage.offsetWidth;
     stage.height = stage.offsetHeight;
+
+    if(fileSelected != null) {
+        fileSelected.objFrame.resize();
+    }
 }).observe(stage)
 
 function setStageSize(rotateButton){
